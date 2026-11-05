@@ -3,7 +3,7 @@ import { defineCreate, defineInputFields, type CreatePerform, type CreatePerform
 
 import { NAME, RENDER_OUTPUT_FIELDS, RENDER_SAMPLE } from '../fields.js';
 import { awaitRender, callTool, compact, finishedResult, supportsCallbacks, toLibraryUrl, type Data } from '../treza.js';
-import { renderExtra, toBool, toNumber } from './shared.js';
+import { optionalBool, renderExtra, toNumber } from './shared.js';
 
 const choices = (values: Array<[string, string]>) => values.map(([value, label]) => ({ value, label, sample: value }));
 
@@ -82,7 +82,7 @@ const perform = (async (z, bundle) => {
 			musicUrl,
 			narrationUrl,
 			musicPrompt: d.musicPrompt,
-			captions: d.captions === undefined || d.captions === '' ? undefined : toBool(d.captions),
+			captions: optionalBool(d.captions),
 			orientation: d.orientation,
 			transition: d.transition,
 			stillSeconds: toNumber(d.stillSeconds),

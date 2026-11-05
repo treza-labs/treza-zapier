@@ -2,7 +2,7 @@ import { defineCreate, defineInputFields, type CreatePerform, type CreatePerform
 
 import { NAME, RENDER_OUTPUT_FIELDS, RENDER_SAMPLE, maxCost } from '../fields.js';
 import { awaitRender, compact, finishedResult, quoteSummary, requestTool, startQuoted, toLibraryUrl, type Data } from '../treza.js';
-import { renderExtra, toBool, toNumber } from './shared.js';
+import { optionalBool, renderExtra, toNumber } from './shared.js';
 
 const inputFields = defineInputFields([
 	{ key: 'prompt', label: 'Prompt', type: 'text', required: true, helpText: 'What the video shows: the subject, the action, the setting and the camera.' },
@@ -39,7 +39,7 @@ const perform = (async (z, bundle) => {
 		aspectRatio: d.aspectRatio,
 		durationSec: toNumber(d.durationSec),
 		model: d.model,
-		withAudio: d.withAudio === undefined ? undefined : toBool(d.withAudio),
+		withAudio: optionalBool(d.withAudio),
 		name: d.name,
 		firstFrameUrl,
 		lastFrameUrl,

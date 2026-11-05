@@ -17,6 +17,9 @@ export default defineApp({
 	version: packageJson.version,
 	platformVersion: zapier.version,
 
+	// Inputs reach perform as the user mapped them; empty values are handled in code.
+	flags: { cleanInputData: false },
+
 	authentication,
 	beforeRequest: [...befores],
 	afterResponse: [...afters],
