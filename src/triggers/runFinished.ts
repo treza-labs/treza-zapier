@@ -10,14 +10,13 @@ const inputFields = defineInputFields([
 		label: 'Run endings',
 		list: true,
 		required: false,
-		default: 'success',
 		choices: [
 			{ value: 'success', label: 'Succeeded', sample: 'success' },
 			{ value: 'error', label: 'Failed', sample: 'error' },
 			{ value: 'partial', label: 'Partly finished', sample: 'partial' },
 			{ value: 'cancelled', label: 'Cancelled', sample: 'cancelled' },
 		],
-		helpText: 'Which endings start the Zap. Leave it on Succeeded to act only on finished files.',
+		helpText: 'Which endings start the Zap. Leave it empty to act only on runs that succeeded.',
 	},
 ]);
 
