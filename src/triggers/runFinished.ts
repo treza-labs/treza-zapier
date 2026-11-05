@@ -1,6 +1,6 @@
 import { defineInputFields, defineTrigger, type PollingTriggerPerform } from 'zapier-platform-core';
 
-import { PIPELINE, RENDER_OUTPUT_FIELDS, RENDER_SAMPLE } from '../fields.js';
+import { PIPELINE, RUN_OUTPUT_FIELDS, RUN_SAMPLE } from '../fields.js';
 import { callTool, runItem, type Data } from '../treza.js';
 
 const inputFields = defineInputFields([
@@ -46,7 +46,7 @@ export default defineTrigger({
 		type: 'polling',
 		inputFields,
 		perform,
-		sample: RENDER_SAMPLE,
-		outputFields: RENDER_OUTPUT_FIELDS,
+		sample: RUN_SAMPLE,
+		outputFields: RUN_OUTPUT_FIELDS,
 	},
 });
