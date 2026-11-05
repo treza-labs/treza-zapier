@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+      # Typecheck, build, and every trigger and action against a mock Treza API.
+      - run: npm test
+      - name: Zapier schema validation
+        run: npx -y zapier-platform-cli@19.3.0 validate --without-style

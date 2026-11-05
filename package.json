@@ -1,0 +1,33 @@
+{
+  "name": "treza-zapier",
+  "version": "1.0.0",
+  "description": "Zapier integration for Treza: generate videos and images, run pipelines and assemble cuts from any Zap.",
+  "scripts": {
+    "test": "rimraf ./dist ./build && tsc && vitest --run",
+    "clean": "rimraf ./dist ./build",
+    "build": "rimraf ./dist ./build && tsc",
+    "dev": "rimraf ./dist ./build && tsc --watch",
+    "_zapier-build": "rimraf ./dist ./build && tsc"
+  },
+  "dependencies": {
+    "zapier-platform-core": "19.3.0"
+  },
+  "devDependencies": {
+    "rimraf": "^5.0.10",
+    "typescript": "5.6.2",
+    "vitest": "^2.1.2"
+  },
+  "private": true,
+  "exports": "./dist/index.js",
+  "type": "module",
+  "homepage": "https://www.trezalabs.com",
+  "author": "Treza Labs <hello@trezalabs.com> (https://www.trezalabs.com)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/treza-labs/treza-zapier.git"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
