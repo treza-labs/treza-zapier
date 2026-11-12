@@ -1,5 +1,12 @@
 import { defineInputField } from 'zapier-platform-core';
 
+/**
+ * Real Treza files for samples. Zapier tests the next step with the sample when
+ * there is no live data, so these must download: a made-up link fails that test.
+ */
+export const SAMPLE_IMAGE_URL = 'https://media.trezalabs.com/api/media/generated/image/94001a28-63ff-444f-84cb-cda99b38ca45.png?s=8X6suchWjDdg9tvKzm6fySo7';
+export const SAMPLE_VIDEO_URL = 'https://media.trezalabs.com/api/media/generated/cutaway0/33f2be3e-620d-46c9-8da2-06ca3dca05b8.mp4?s=n7YxmxN9kjkp-THOnJeoabe7';
+
 /** A pipeline, picked from the account's list. */
 export const PIPELINE = defineInputField({
 	key: 'pipelineId',
@@ -50,11 +57,11 @@ export const RENDER_OUTPUT_FIELDS = [
  */
 export const RUN_SAMPLE = {
 	id: '2026-11-05T20:57:03.674Z#9729af5f',
-	url: 'https://media.trezalabs.com/api/media/generated/video/54407e0c-3b5e-4b6f-84eb-9962d7188de3.mp4',
+	url: SAMPLE_VIDEO_URL,
 	status: 'success',
 	finished: true,
 	durationSeconds: 38.6,
-	outputs: { video: 'https://media.trezalabs.com/api/media/generated/video/54407e0c-3b5e-4b6f-84eb-9962d7188de3.mp4' },
+	outputs: { video: SAMPLE_VIDEO_URL },
 	runId: '2026-11-05T20:57:03.674Z#9729af5f',
 	pipelineId: 'pipeline_1793911299446_1o0jzvvse',
 	trigger: 'api',
@@ -77,13 +84,13 @@ export const RUN_OUTPUT_FIELDS = [
 
 export const RENDER_SAMPLE = {
 	id: '2026-11-05T17:37:04.722Z#60761e1e',
-	url: 'https://media.trezalabs.com/api/media/generated/image/94001a28-63ff-444f-84cb-cda99b38ca45.png',
+	url: SAMPLE_IMAGE_URL,
 	status: 'success',
 	finished: true,
 	estimatedChargeUsd: 0.06,
 	model: 'google/gemini-2.5-flash-image',
 	durationSeconds: 6.6,
-	outputs: { image: 'https://media.trezalabs.com/api/media/generated/image/94001a28-63ff-444f-84cb-cda99b38ca45.png' },
+	outputs: { image: SAMPLE_IMAGE_URL },
 	runId: '2026-11-05T17:37:04.722Z#60761e1e',
 	pipelineId: 'pipeline_1793481891925_m4p901yqr',
 	trigger: 'api',

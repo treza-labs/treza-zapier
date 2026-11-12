@@ -3,6 +3,7 @@ import zapier from 'zapier-platform-core';
 
 import App from '../src/index.js';
 import { resetCallbackSupport } from '../src/treza.js';
+import { SAMPLE_VIDEO_URL } from '../src/fields.js';
 import { KEY, startMock, type Mock } from './mock-treza.js';
 
 const appTester = zapier.createAppTester(App);
@@ -28,6 +29,9 @@ beforeEach(() => {
 const toolCalls = (name: string) => mock.calls.filter((c) => c.tool === name);
 const run = (key: string, inputData: Record<string, unknown>) =>
 	appTester((App.creates as any)[key].operation.perform, { authData: auth, inputData });
+/** A test click in the Zap editor: Zapier keeps what the step returns at once. */
+const runInEditor = (key: string, inputData: Record<string, unknown>) =>
+	appTester((App.creates as any)[key].operation.perform, { authData: auth, inputData, meta: { isLoadingSample: true } } as any);
 const resume = (key: string, outputData: Record<string, unknown>, cleanedRequest: Record<string, unknown>) =>
 	appTester((App.creates as any)[key].operation.performResume, { authData: auth, inputData: {}, outputData, cleanedRequest } as any);
 
@@ -132,6 +136,25 @@ describe('Generate Video', () => {
 		const item = await run('generate_video', { prompt: 'otter', maxCostUsd: '2' });
 		expect(item).toMatchObject({ status: 'running', finished: false });
 		expect(item.note).toMatch(/Run Finished trigger/);
+	}, 20_000);
+});
+
+describe('testing a step in the Zap editor', () => {
+	it('waits for the render instead of a callback, so the next step gets the real file', async () => {
+		mock.callbacks = true;
+		const item = await runInEditor('generate_image', { prompt: 'fox', maxCostUsd: '1' });
+		expect(toolCalls('run_pipeline')[0]!.args).not.toHaveProperty('callbackUrl');
+		expect(item).toMatchObject({ status: 'success', finished: true });
+		expect(item.url).toMatch(/image\.png/);
+		expect(item).not.toHaveProperty('note');
+	});
+
+	it('a render that outlasts the test gives a real sample file to map', async () => {
+		mock.callbacks = true;
+		mock.stuck = true;
+		const item = await runInEditor('generate_video', { prompt: 'otter', maxCostUsd: '2' });
+		expect(item).toMatchObject({ status: 'running', finished: false, url: SAMPLE_VIDEO_URL });
+		expect(item.note).toMatch(/sample file/);
 	}, 20_000);
 });
 

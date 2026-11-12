@@ -1,8 +1,8 @@
 import { randomUUID } from 'node:crypto';
 import { defineCreate, defineInputFields, type CreatePerform, type CreatePerformResume } from 'zapier-platform-core';
 
-import { NAME, RENDER_OUTPUT_FIELDS, RENDER_SAMPLE } from '../fields.js';
-import { awaitRender, callTool, compact, finishedResult, supportsCallbacks, toLibraryUrl, type Data } from '../treza.js';
+import { NAME, RENDER_OUTPUT_FIELDS, RENDER_SAMPLE, SAMPLE_VIDEO_URL } from '../fields.js';
+import { awaitRender, callTool, compact, callbackUrlFor, finishedResult, toLibraryUrl, type Data } from '../treza.js';
 import { optionalBool, renderExtra, toNumber } from './shared.js';
 
 const choices = (values: Array<[string, string]>) => values.map(([value, label]) => ({ value, label, sample: value }));
@@ -73,7 +73,7 @@ const perform = (async (z, bundle) => {
 		d.music ? toLibraryUrl(z, String(d.music)) : undefined,
 		d.narration ? toLibraryUrl(z, String(d.narration)) : undefined,
 	]);
-	const callbackUrl = (await supportsCallbacks(z)) ? z.generateCallbackUrl() : undefined;
+	const callbackUrl = await callbackUrlFor(z, bundle);
 	const started = await callTool(
 		z,
 		'assemble_video',
@@ -122,7 +122,7 @@ export default defineCreate({
 		inputFields,
 		perform,
 		performResume,
-		sample: { ...RENDER_SAMPLE, url: 'https://media.trezalabs.com/api/media/generated/video/cut-91a.mp4', outputs: { video: 'https://media.trezalabs.com/api/media/generated/video/cut-91a.mp4' }, estimatedChargeUsd: 0, model: undefined },
+		sample: { ...RENDER_SAMPLE, url: SAMPLE_VIDEO_URL, outputs: { video: SAMPLE_VIDEO_URL }, estimatedChargeUsd: 0, model: undefined },
 		outputFields: RENDER_OUTPUT_FIELDS,
 	},
 });

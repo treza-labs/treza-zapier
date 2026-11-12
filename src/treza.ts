@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import type { Bundle, ZObject } from 'zapier-platform-core';
 
 import packageJson from '../package.json' with { type: 'json' };
+import { SAMPLE_IMAGE_URL, SAMPLE_VIDEO_URL } from './fields.js';
 
 /** Treza's REST API. Tests point it at a mock with TREZA_BASE_URL. */
 export const baseUrl = (): string => (process.env.TREZA_BASE_URL || 'https://www.trezalabs.com').replace(/\/+$/, '');
@@ -145,6 +146,20 @@ export function supportsCallbacks(z: ZObject): Promise<boolean> {
 	return callbackSupport;
 }
 
+/**
+ * Where Treza should report the finished render, or nowhere. A test in the Zap
+ * editor keeps whatever the step returns at once and never waits for a
+ * callback, so a test waits inline instead and comes back with the file.
+ */
+export async function callbackUrlFor(z: ZObject, bundle: Bundle): Promise<string | undefined> {
+	if (bundle.meta?.isLoadingSample) return undefined;
+	return (await supportsCallbacks(z)) ? z.generateCallbackUrl() : undefined;
+}
+
+/** A real file of the kind a step makes, for an editor test that outlasts the wait. */
+const sampleFile = (outputKey?: string): string | undefined =>
+	outputKey === 'image' ? SAMPLE_IMAGE_URL : outputKey === 'video' ? SAMPLE_VIDEO_URL : undefined;
+
 /** For tests: forget what the schema said. */
 export function resetCallbackSupport(): void {
 	callbackSupport = undefined;
@@ -172,6 +187,14 @@ export async function awaitRender(
 		if (run.status !== 'running') return finishedResult(z, run, started.extra, outputKey);
 		const wait = Math.min(Math.max(Number(run.pollAfterSec) || 3, 2), 5) * 1000;
 		if (Date.now() + wait >= deadline) {
+			const sample = bundle.meta?.isLoadingSample ? sampleFile(outputKey) : undefined;
+			if (sample) {
+				return {
+					...pending,
+					url: sample,
+					note: 'Still rendering, so this test gives a sample file as File URL to set up the next step with. Live runs wait for the render and give its file.',
+				};
+			}
 			return {
 				...pending,
 				note: 'Still rendering. Add a Run Finished trigger on this pipeline to continue when it is done.',
@@ -209,11 +232,12 @@ export interface StartedRender {
  */
 export async function startQuoted(
 	z: ZObject,
+	bundle: Bundle,
 	maxCostUsd: number,
 	quote: () => Promise<ToolResult>,
 	inputs?: Data,
 ): Promise<StartedRender> {
-	const callbackUrl = (await supportsCallbacks(z)) ? z.generateCallbackUrl() : undefined;
+	const callbackUrl = await callbackUrlFor(z, bundle);
 	for (let attempt = 0; ; attempt++) {
 		const quotedResult = await quote();
 		if (!quotedResult.ok) {

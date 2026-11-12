@@ -7,7 +7,7 @@ import {
 	type ZObject,
 } from 'zapier-platform-core';
 
-import { PIPELINE, RENDER_OUTPUT_FIELDS, RENDER_SAMPLE, maxCost } from '../fields.js';
+import { PIPELINE, RENDER_OUTPUT_FIELDS, RENDER_SAMPLE, SAMPLE_VIDEO_URL, maxCost } from '../fields.js';
 import { awaitRender, callTool, finishedResult, requestTool, startQuoted, toLibraryUrl, type Data } from '../treza.js';
 import { renderExtra } from './shared.js';
 
@@ -62,7 +62,7 @@ const perform = (async (z, bundle) => {
 		}
 	}
 	const maxCostUsd = Number(data.maxCostUsd);
-	const started = await startQuoted(z, maxCostUsd, () => requestTool(z, 'estimate_run_cost', { pipelineId }), Object.keys(inputs).length ? inputs : undefined);
+	const started = await startQuoted(z, bundle, maxCostUsd, () => requestTool(z, 'estimate_run_cost', { pipelineId }), Object.keys(inputs).length ? inputs : undefined);
 	return awaitRender(z, bundle, { ...started, extra: { estimatedChargeUsd: started.quoted.estimatedChargeUsd } }, undefined, startedAt);
 }) satisfies CreatePerform<typeof inputFields>;
 
@@ -80,7 +80,7 @@ export default defineCreate({
 		inputFields,
 		perform,
 		performResume,
-		sample: { ...RENDER_SAMPLE, outputs: { final_cut: 'https://media.trezalabs.com/api/media/generated/video/7c1e.mp4' }, url: 'https://media.trezalabs.com/api/media/generated/video/7c1e.mp4' },
+		sample: { ...RENDER_SAMPLE, outputs: { final_cut: SAMPLE_VIDEO_URL }, url: SAMPLE_VIDEO_URL },
 		outputFields: RENDER_OUTPUT_FIELDS,
 	},
 });

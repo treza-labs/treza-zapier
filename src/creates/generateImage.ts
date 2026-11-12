@@ -29,7 +29,7 @@ const perform = (async (z, bundle) => {
 	const referenceImageUrls = await Promise.all(files.map((f) => toLibraryUrl(z, f)));
 	const maxCostUsd = Number(d.maxCostUsd);
 	const args = compact({ prompt: d.prompt, aspectRatio: d.aspectRatio, model: d.model, referenceImageUrls, name: d.name, maxPriceUsd: maxCostUsd });
-	const started = await startQuoted(z, maxCostUsd, () => requestTool(z, 'make_image', args));
+	const started = await startQuoted(z, bundle, maxCostUsd, () => requestTool(z, 'make_image', args));
 	return awaitRender(z, bundle, { ...started, extra: quoteSummary(started.quoted) }, 'image', startedAt);
 }) satisfies CreatePerform<typeof inputFields>;
 

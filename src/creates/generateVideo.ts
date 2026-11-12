@@ -1,6 +1,6 @@
 import { defineCreate, defineInputFields, type CreatePerform, type CreatePerformResume } from 'zapier-platform-core';
 
-import { NAME, RENDER_OUTPUT_FIELDS, RENDER_SAMPLE, maxCost } from '../fields.js';
+import { NAME, RENDER_OUTPUT_FIELDS, RENDER_SAMPLE, SAMPLE_VIDEO_URL, maxCost } from '../fields.js';
 import { awaitRender, compact, finishedResult, quoteSummary, requestTool, startQuoted, toLibraryUrl, type Data } from '../treza.js';
 import { optionalBool, renderExtra, toNumber } from './shared.js';
 
@@ -46,7 +46,7 @@ const perform = (async (z, bundle) => {
 		continueFromVideoUrl,
 		maxPriceUsd: maxCostUsd,
 	});
-	const started = await startQuoted(z, maxCostUsd, () => requestTool(z, 'make_video', args));
+	const started = await startQuoted(z, bundle, maxCostUsd, () => requestTool(z, 'make_video', args));
 	return awaitRender(z, bundle, { ...started, extra: quoteSummary(started.quoted) }, 'video', startedAt);
 }) satisfies CreatePerform<typeof inputFields>;
 
@@ -64,7 +64,7 @@ export default defineCreate({
 		inputFields,
 		perform,
 		performResume,
-		sample: { ...RENDER_SAMPLE, url: 'https://media.trezalabs.com/api/media/generated/video/7c1e.mp4', model: 'google/veo-3.1-lite', estimatedChargeUsd: 0.56, outputs: { video: 'https://media.trezalabs.com/api/media/generated/video/7c1e.mp4' } },
+		sample: { ...RENDER_SAMPLE, url: SAMPLE_VIDEO_URL, model: 'google/veo-3.1-lite', estimatedChargeUsd: 0.56, outputs: { video: SAMPLE_VIDEO_URL } },
 		outputFields: RENDER_OUTPUT_FIELDS,
 	},
 });
