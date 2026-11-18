@@ -225,7 +225,7 @@ export interface StartedRender {
 }
 
 /**
- * Get Treza's quote, stop if it is over Max cost or the balance doesn't cover
+ * Get Treza's quote, stop if it is over Max cost (when one is set) or the balance doesn't cover
  * it, then start the render once at the quoted price. A quote another render
  * took first is quoted again; a price the inputs raised still runs, once, if
  * it stays under Max cost.

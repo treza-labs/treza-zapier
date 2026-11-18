@@ -1,6 +1,6 @@
 import { defineCreate, defineInputFields, type CreatePerform, type CreatePerformResume } from 'zapier-platform-core';
 
-import { NAME, RENDER_OUTPUT_FIELDS, RENDER_SAMPLE, maxCost } from '../fields.js';
+import { NAME, RENDER_OUTPUT_FIELDS, RENDER_SAMPLE, MAX_COST, costCap } from '../fields.js';
 import { awaitRender, compact, finishedResult, quoteSummary, requestTool, startQuoted, toLibraryUrl, type Data } from '../treza.js';
 import { renderExtra } from './shared.js';
 
@@ -8,7 +8,7 @@ const SHAPES = ['1:1', '16:9', '9:16', '4:5', '3:4', '4:3', '2:3', '3:2', '5:4',
 
 const inputFields = defineInputFields([
 	{ key: 'prompt', label: 'Prompt', type: 'text', required: true, helpText: 'What the picture shows. With reference pictures, what to change about them.' },
-	maxCost('0.50'),
+	MAX_COST,
 	{
 		key: 'aspectRatio',
 		label: 'Shape',
@@ -27,8 +27,8 @@ const perform = (async (z, bundle) => {
 	const files = (Array.isArray(d.referenceImages) ? d.referenceImages : [d.referenceImages]).filter(Boolean).map(String);
 	if (files.length > 4) throw new z.errors.Error('Add at most 4 reference pictures.', 'InvalidInput', 400);
 	const referenceImageUrls = await Promise.all(files.map((f) => toLibraryUrl(z, f)));
-	const maxCostUsd = Number(d.maxCostUsd);
-	const args = compact({ prompt: d.prompt, aspectRatio: d.aspectRatio, model: d.model, referenceImageUrls, name: d.name, maxPriceUsd: maxCostUsd });
+	const maxCostUsd = costCap(d.maxCostUsd);
+	const args = compact({ prompt: d.prompt, aspectRatio: d.aspectRatio, model: d.model, referenceImageUrls, name: d.name, maxPriceUsd: Number.isFinite(maxCostUsd) ? maxCostUsd : undefined });
 	const started = await startQuoted(z, bundle, maxCostUsd, () => requestTool(z, 'make_image', args));
 	return awaitRender(z, bundle, { ...started, extra: quoteSummary(started.quoted) }, 'image', startedAt);
 }) satisfies CreatePerform<typeof inputFields>;

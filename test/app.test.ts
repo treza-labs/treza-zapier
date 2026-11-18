@@ -117,6 +117,15 @@ describe('Generate Video', () => {
 		expect(toolCalls('run_pipeline')).toHaveLength(0);
 	});
 
+	// 2026-11-18: the cap used to be required with a $2 default, which stopped an
+	// 8 second Seedance 2.5 clip ($2.63) someone meant to make.
+	it('runs at the quoted price when Max cost is left empty', async () => {
+		const pending = await run('generate_video', { prompt: 'otter', durationSec: '12' });
+		expect(pending).toBeTruthy();
+		expect(toolCalls('make_video')[0]!.args).not.toHaveProperty('maxPriceUsd');
+		expect(toolCalls('run_pipeline')).toHaveLength(1);
+	});
+
 	it('a balance that does not cover it: stops with the top-up link', async () => {
 		mock.balanceUsd = 0.5;
 		await expect(run('generate_video', { prompt: 'otter', maxCostUsd: '2' })).rejects.toThrow(/balance is \$0\.50\. Nothing was charged\. Add credits at https:\/\/www\.trezalabs\.com/);

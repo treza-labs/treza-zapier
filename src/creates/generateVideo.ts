@@ -1,12 +1,12 @@
 import { defineCreate, defineInputFields, type CreatePerform, type CreatePerformResume } from 'zapier-platform-core';
 
-import { NAME, RENDER_OUTPUT_FIELDS, RENDER_SAMPLE, SAMPLE_VIDEO_URL, maxCost } from '../fields.js';
+import { NAME, RENDER_OUTPUT_FIELDS, RENDER_SAMPLE, SAMPLE_VIDEO_URL, MAX_COST, costCap } from '../fields.js';
 import { awaitRender, compact, finishedResult, quoteSummary, requestTool, startQuoted, toLibraryUrl, type Data } from '../treza.js';
 import { optionalBool, renderExtra, toNumber } from './shared.js';
 
 const inputFields = defineInputFields([
 	{ key: 'prompt', label: 'Prompt', type: 'text', required: true, helpText: 'What the video shows: the subject, the action, the setting and the camera.' },
-	maxCost('2'),
+	MAX_COST,
 	{
 		key: 'aspectRatio',
 		label: 'Shape',
@@ -33,7 +33,7 @@ const perform = (async (z, bundle) => {
 	const [firstFrameUrl, lastFrameUrl, continueFromVideoUrl] = await Promise.all(
 		[d.firstFrame, d.lastFrame, d.continueFrom].map((f) => (f ? toLibraryUrl(z, String(f)) : undefined)),
 	);
-	const maxCostUsd = Number(d.maxCostUsd);
+	const maxCostUsd = costCap(d.maxCostUsd);
 	const args = compact({
 		prompt: d.prompt,
 		aspectRatio: d.aspectRatio,
@@ -44,7 +44,7 @@ const perform = (async (z, bundle) => {
 		firstFrameUrl,
 		lastFrameUrl,
 		continueFromVideoUrl,
-		maxPriceUsd: maxCostUsd,
+		maxPriceUsd: Number.isFinite(maxCostUsd) ? maxCostUsd : undefined,
 	});
 	const started = await startQuoted(z, bundle, maxCostUsd, () => requestTool(z, 'make_video', args));
 	return awaitRender(z, bundle, { ...started, extra: quoteSummary(started.quoted) }, 'video', startedAt);

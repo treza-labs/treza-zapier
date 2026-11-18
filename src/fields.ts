@@ -16,17 +16,27 @@ export const PIPELINE = defineInputField({
 	helpText: 'One of your Treza pipelines.',
 });
 
-/** The price cap every quoted render needs, since no one approves a price inside a Zap. */
-export const maxCost = (defaultUsd: string) =>
-	defineInputField({
-		key: 'maxCostUsd',
-		label: 'Max cost (USD)',
-		type: 'number',
-		required: true,
-		default: defaultUsd,
-		helpText:
-			'The most this step may spend. Treza quotes the price first; if it is higher, the step stops and nothing is charged.',
-	});
+/**
+ * An optional price cap on a quoted render. Left empty, the step runs at
+ * whatever Treza quotes, as long as the balance covers it: a default cap
+ * stopped clips people meant to make (Seedance 2.5 over 6 seconds is more
+ * than the old $2 default, 2026-11-18).
+ */
+export const MAX_COST = defineInputField({
+	key: 'maxCostUsd',
+	label: 'Max cost (USD)',
+	type: 'number',
+	required: false,
+	helpText:
+		'Optional. The most this step may spend. Treza quotes the price first; if it is higher, the step stops and nothing is charged. Leave empty for no limit.',
+});
+
+/** The cap as a number: Infinity when the field is empty or not a positive number. */
+export function costCap(value: unknown): number {
+	if (value === undefined || value === null || value === '') return Infinity;
+	const cap = Number(value);
+	return Number.isFinite(cap) && cap > 0 ? cap : Infinity;
+}
 
 export const NAME = defineInputField({
 	key: 'name',

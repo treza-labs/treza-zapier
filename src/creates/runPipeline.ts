@@ -7,7 +7,7 @@ import {
 	type ZObject,
 } from 'zapier-platform-core';
 
-import { PIPELINE, RENDER_OUTPUT_FIELDS, RENDER_SAMPLE, SAMPLE_VIDEO_URL, maxCost } from '../fields.js';
+import { PIPELINE, RENDER_OUTPUT_FIELDS, RENDER_SAMPLE, SAMPLE_VIDEO_URL, MAX_COST, costCap } from '../fields.js';
 import { awaitRender, callTool, finishedResult, requestTool, startQuoted, toLibraryUrl, type Data } from '../treza.js';
 import { renderExtra } from './shared.js';
 
@@ -38,7 +38,7 @@ const pipelineInputs = async (z: ZObject, bundle: Bundle) => {
 const inputFields = defineInputFields([
 	{ ...PIPELINE, altersDynamicFields: true },
 	pipelineInputs,
-	maxCost('5'),
+	MAX_COST,
 ]);
 
 const perform = (async (z, bundle) => {
@@ -61,7 +61,7 @@ const perform = (async (z, bundle) => {
 			inputs[node.id] = value;
 		}
 	}
-	const maxCostUsd = Number(data.maxCostUsd);
+	const maxCostUsd = costCap(data.maxCostUsd);
 	const started = await startQuoted(z, bundle, maxCostUsd, () => requestTool(z, 'estimate_run_cost', { pipelineId }), Object.keys(inputs).length ? inputs : undefined);
 	return awaitRender(z, bundle, { ...started, extra: { estimatedChargeUsd: started.quoted.estimatedChargeUsd } }, undefined, startedAt);
 }) satisfies CreatePerform<typeof inputFields>;

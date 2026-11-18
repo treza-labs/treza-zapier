@@ -20,7 +20,7 @@ Files from other apps (frames, reference pictures, clips, music) are uploaded to
 
 ## Spending and safety
 
-- **Max cost** is required on Generate Video, Generate Image and Run Pipeline. The step gets Treza's quote first, and it stops before anything is charged if the price is higher or the balance doesn't cover it. The render then starts at the quoted price, once.
+- **Max cost** is optional on Generate Video, Generate Image and Run Pipeline, with no default. Set it and the step gets Treza's quote first, and it stops before anything is charged if the price is higher. With or without it, the step stops if the balance doesn't cover it. The render then starts at the quoted price, once.
 - If someone else's render took the quote first, the step quotes again. If the pipeline's inputs raise the price but it stays under Max cost, it still runs once.
 
 ## Long renders
