@@ -4,6 +4,12 @@ The [Zapier](https://zapier.com) integration for [Treza](https://www.trezalabs.c
 
 Built with the [Zapier Platform CLI](https://docs.zapier.com/integrations/build-cli/overview) in TypeScript. Calls go to Treza's REST API, `POST https://www.trezalabs.com/api/v1/tools/<name>`, with the same tools, permissions and refusals as Treza's MCP server and the [n8n node](https://github.com/treza-labs/n8n-nodes-treza).
 
+## What Treza makes
+
+![Four short clips made with Treza: a red hover car racing through a neon city, an astronaut walking over a Martian dune at sunset, an orchid mantis on a leaf, and espresso pouring into a cup](https://raw.githubusercontent.com/treza-labs/treza-labs/main/assets/treza-demo.gif)
+
+These clips were made with [Treza](https://www.trezalabs.com), and the [Zapier integration page](https://www.trezalabs.com/integrations/zapier) shows how to set up this integration.
+
 ## What it does
 
 | Kind | Name | What it does |
